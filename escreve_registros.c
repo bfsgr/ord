@@ -44,7 +44,7 @@ int main(){
         input(reg.cep, 9);
 
         short size = calc_size(&reg);
-        fprintf(saida, "%i", size);
+        fwrite(&size, sizeof(size), 1, saida);
         fputs(reg.sobrenome, saida);
         fputc(PIPE, saida);
         fputs(reg.nome, saida);

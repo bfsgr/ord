@@ -53,12 +53,7 @@ int leia_registro(FILE *fp, char *str, int tam){
 
     if(status == 0){
         return 0;
-    } else {
-        char low = (char) (len >> 8);
-        char high = (char) len; 
-        char lenght[3] = { high, low, '\0' };
-        len = (short) strtol(lenght, (char **)NULL, 10);
-    }
+    } 
 
     if(len < tam) {
         len = fread(str, sizeof(char), len, fp);
