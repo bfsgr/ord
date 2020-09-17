@@ -1,0 +1,139 @@
+Busca pelo registro de chave "233"
+233|The Fall of Arthur|Poetry|J.R.R. Tolkien, Christopher Tolkien|3.81|233|2013/05/23| (86 bytes)
+
+Busca pelo registro de chave "274"
+274|The City of Mirrors|Horror|Justin Cronin|4.2|602|2016/05/24| (64 bytes)
+
+Busca pelo registro de chave "93"
+93|The Silkworm|Mystery & Thriller|Robert Galbraith, J.K. Rowling|4.04|456|2014/06/24| (86 bytes)
+
+Busca pelo registro de chave "430"
+Erro: registro nao encontrado!
+
+Busca pelo registro de chave "377"
+377|Inferno|Mystery & Thriller|Dan Brown|3.85|463|2013/05/14| (61 bytes)
+
+Busca pelo registro de chave "1"
+1|The Autistic Brain: Thinking Across the Spectrum|Nonfiction|Temple Grandin, Richard Panek|4.11|240|2013/04/30| (112 bytes)
+
+Busca pelo registro de chave "335"
+335|Fifty Shades of Grey|Romance|E.L. James|3.66|356|2011/05/25| (64 bytes)
+
+Busca pelo registro de chave "402"
+Erro: registro nao encontrado!
+
+Remocao do registro de chave "280"
+Registro removido! (128 bytes)
+Posicao: offset = 24654 bytes
+
+Remocao do registro de chave "27"
+Registro removido! (51 bytes)
+Posicao: offset = 10057 bytes
+
+Remocao do registro de chave "302"
+Registro removido! (128 bytes)
+Posicao: offset = 18928 bytes
+
+Remocao do registro de chave "145"
+Registro removido! (53 bytes)
+Posicao: offset = 9527 bytes
+
+Remocao do registro de chave "184"
+Registro removido! (128 bytes)
+Posicao: offset = 20171 bytes
+
+Remocao do registro de chave "230"
+Registro removido! (127 bytes)
+Posicao: offset = 15612 bytes
+
+Remocao do registro de chave "376"
+Registro removido! (56 bytes)
+Posicao: offset = 26668 bytes
+
+Insercao do registro de chave "424" (74 bytes)
+Local: offset = 15612 bytes (0x3cfc)
+Tamanho do espaco: 127 bytes
+Tamanho da sobra: 51 bytes
+Offset da sobra: 15688 bytes (0x3d48)
+
+Insercao do registro de chave "427" (69 bytes)
+Local: offset = 20171 bytes (0x4ecb)
+Tamanho do espaco: 128 bytes
+Tamanho da sobra: 57 bytes
+Offset da sobra: 20242 bytes (0x4f12)
+
+Insercao do registro de chave "459" (48 bytes)
+Local: offset = 20242 bytes (0x4f12)
+Tamanho do espaco: 57 bytes
+
+Insercao do registro de chave "464" (123 bytes)
+Local: offset = 18928 bytes (0x49f0)
+Tamanho do espaco: 128 bytes
+
+Insercao do registro de chave "411" (50 bytes)
+Local: offset = 15688 bytes (0x3d48)
+Tamanho do espaco: 51 bytes
+
+Insercao do registro de chave "450" (61 bytes)
+Local: offset = 24654 bytes (0x604e)
+Tamanho do espaco: 128 bytes
+Tamanho da sobra: 65 bytes
+Offset da sobra: 24717 bytes (0x608d)
+
+Insercao do registro de chave "471" (50 bytes)
+Local: offset = 24717 bytes (0x608d)
+Tamanho do espaco: 65 bytes
+Tamanho da sobra: 13 bytes
+Offset da sobra: 24769 bytes (0x60c1)
+
+Insercao do registro de chave "455" (61 bytes)
+Local: fim do arquivo
+
+Insercao do registro de chave "419" (50 bytes)
+Local: offset = 26668 bytes (0x682c)
+Tamanho do espaco: 56 bytes
+
+Insercao do registro de chave "460" (120 bytes)
+Local: fim do arquivo
+
+Insercao do registro de chave "463" (55 bytes)
+Local: fim do arquivo
+
+Insercao do registro de chave "443" (70 bytes)
+Local: fim do arquivo
+
+Insercao do registro de chave "465" (55 bytes)
+Local: fim do arquivo
+
+Remocao do registro de chave "230"
+Erro: registro nao encontrado!
+
+Remocao do registro de chave "263"
+Registro removido! (73 bytes)
+Posicao: offset = 20902 bytes
+
+Remocao do registro de chave "360"
+Registro removido! (79 bytes)
+Posicao: offset = 19850 bytes
+
+Busca pelo registro de chave "412"
+Erro: registro nao encontrado!
+
+Busca pelo registro de chave "455"
+455|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18| (61 bytes)
+
+Busca pelo registro de chave "460"
+460|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24| (120 bytes)
+
+Busca pelo registro de chave "459"
+Erro: registro nao encontrado!
+
+Busca pelo registro de chave "427"
+427|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|9 (70 bytes)
+
+Busca pelo registro de chave "145"
+Erro: registro nao encontrado!
+
+Busca pelo registro de chave "27"
+Erro: registro nao encontrado!
+
