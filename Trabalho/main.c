@@ -41,7 +41,9 @@ bool importa(char* filename){
         char *l = strtok(bloco, DELIM_REG);
 
         while(l != NULL){
-            escreve(dat, l);
+            if(!escreve(dat, l)){
+                return false;
+            }
             l = strtok(NULL, DELIM_REG);
         }
 
@@ -53,16 +55,23 @@ bool importa(char* filename){
 }
 
 bool escreve(FILE* arquivo, char *registro){
-    short size = tamanho(registro) + 1;
-    fwrite(&size, sizeof(size), 1, arquivo);
-    fputc((char) DELIM_FIELD, arquivo);
-    fputs(registro, arquivo);
+    short size = strlen(registro) + 1;
+    if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
+        printf("Erro de escrita - (tamanho)\n");
+        return false;
+    }
+    if(fputc((char) DELIM_FIELD, arquivo) == EOF) {
+        printf("Erro de escrita - (delimitador)\n");
+        return false;
+    }
+    if(fputs(registro, arquivo) == EOF) {
+        printf("Erro de escrita - (registro)\n");
+        return false;
+    }
     return true;
 }
 
-short tamanho(char *registro){
-    return strlen(registro);
-}
+
 
 unsigned int le_bloco(FILE* arquivo, char* buffer){
     unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
@@ -76,7 +85,6 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
             return lidos;
         }
     };
-
     return lidos;
 }
 
