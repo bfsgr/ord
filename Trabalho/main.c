@@ -55,13 +55,9 @@ bool importa(char* filename){
 }
 
 bool escreve(FILE* arquivo, char *registro){
-    short size = strlen(registro) + 1;
+    short size = strlen(registro);
     if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
         printf("Erro de escrita - (tamanho)\n");
-        return false;
-    }
-    if(fputc((char) DELIM_FIELD, arquivo) == EOF) {
-        printf("Erro de escrita - (delimitador)\n");
         return false;
     }
     if(fputs(registro, arquivo) == EOF) {
