@@ -34,6 +34,10 @@ int main(int argc, char **argv) {
 bool importa(char* filename){
     FILE* dados = abrir_arquivo(filename, "rb");
     FILE* dat = abrir_arquivo(strcat(filename, ".dat"), "w");
+
+    if(!cria_header(dat)){
+        return false;
+    }
     
     char bloco[BLOCO];
 
@@ -46,7 +50,6 @@ bool importa(char* filename){
             }
             l = strtok(NULL, DELIM_REG);
         }
-
     }
 
     fclose(dat);
@@ -67,8 +70,6 @@ bool escreve(FILE* arquivo, char *registro){
     return true;
 }
 
-
-
 unsigned int le_bloco(FILE* arquivo, char* buffer){
     unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
     
@@ -82,6 +83,15 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
         }
     };
     return lidos;
+}
+
+bool cria_header(FILE* arquivo){
+    long head = 0;
+    if(fwrite(&head, sizeof(head), 1, arquivo) != 1){
+        printf("Erro ao criar o header.\n");
+        return false;
+    }
+    return true;
 }
 
 FILE* abrir_arquivo(char *filename, char* modo){
