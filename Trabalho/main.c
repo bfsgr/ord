@@ -13,8 +13,10 @@ int main(int argc, char **argv) {
 
     if (strcmp(argv[1], "-i") == 0) {
         printf("Modo de importacao ativado ... nome do arquivo = %s\n", argv[2]);
+
     } else if (strcmp(argv[1], "-e") == 0) {
         printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n", argv[2]);
+
     } else {
         fprintf(stderr, "Opcao \"%s\" nao suportada!\n", argv[1]);
     }
