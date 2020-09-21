@@ -31,6 +31,10 @@ int main(int argc, char **argv) {
     return 0;
 }
 
+//Importa os dados de um arquivo arbitrário e os escreve em dados.dat
+//Retorno:
+//  TRUE - se a importação ocorrer com sucesso
+//  FALSE - se algum erro acontecer
 bool importa(char* filename){
     FILE* dados = abrir_arquivo(filename, "rb");
     FILE* dat = abrir_arquivo("dados.dat", "w");
@@ -57,6 +61,11 @@ bool importa(char* filename){
     return true;
 }
 
+//Escreve um registro arbitrário na cabeça de leitura atual do arquivo de dados
+//Prefixa o registro com o seu tamanho
+//Retorno:
+//  TRUE - se o registro for escrito com sucesso
+//  FALSE -se algum erro acontecer na escrita
 bool escreve(FILE* arquivo, char *registro){
     short size = strlen(registro);
     if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
@@ -70,6 +79,8 @@ bool escreve(FILE* arquivo, char *registro){
     return true;
 }
 
+//Le um bloco de dados do arquivo para um buffer de tamanho BLOCO
+//Retorna o número de bytes lidos do arquivo
 unsigned int le_bloco(FILE* arquivo, char* buffer){
     unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
     
@@ -85,6 +96,9 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
     return lidos;
 }
 
+//Cria um header de 8 bytes para o manuseio da LED
+//Retorna TRUE se o header for criado com sucesso
+//Retorna FALSE se ocorrer um problema de escrita
 bool cria_header(FILE* arquivo){
     long head = 0;
     if(fwrite(&head, sizeof(head), 1, arquivo) != 1){
@@ -94,6 +108,9 @@ bool cria_header(FILE* arquivo){
     return true;
 }
 
+//Abre um arquivo dado o modo
+//Retorna um ponteiro para o FILE stream
+//Em caso de erro encerra a execução do programa com código 1
 FILE* abrir_arquivo(char *filename, char* modo){
     FILE *fp;
     fp = fopen(filename, modo);
