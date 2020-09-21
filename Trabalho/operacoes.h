@@ -10,3 +10,4 @@ FILE* abrir_arquivo(char *filename, char* modo);
 unsigned int le_bloco(FILE* arquivo, char* buffer);
 bool escreve(FILE* arquivo, char *registro);
 bool cria_header(FILE* arquivo);
+

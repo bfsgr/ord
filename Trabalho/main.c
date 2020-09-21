@@ -33,7 +33,7 @@ int main(int argc, char **argv) {
 
 bool importa(char* filename){
     FILE* dados = abrir_arquivo(filename, "rb");
-    FILE* dat = abrir_arquivo(strcat(filename, ".dat"), "w");
+    FILE* dat = abrir_arquivo("dados.dat", "w");
 
     if(!cria_header(dat)){
         return false;
