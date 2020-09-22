@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define BLOCO 512 //Tamanho do bloco bufferizado do arquivo
-#define DELIM_LINE "\n" //
+#define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo
+#define REGISTRO 2048
+#define DELIM_REG "\n" //
 #define DELIM_FIELD "|" //
 
 bool importa(char *filename);
