@@ -44,15 +44,51 @@ bool importa(char* filename){
     }
     
     char bloco[BLOCO];
+    char regbuff[REGISTRO];
+    regbuff[0] = '\0';
+    char *p = NULL;
+    bool fragmentado = false;
 
     while(le_bloco(dados, bloco) > 0){
-        char *l = strtok(bloco, DELIM_REG);
+        char *l = strtok_r(bloco, DELIM_REG, &p);
 
         while(l != NULL){
-            if(!escreve(dat, l)){
-                return false;
+            if(*p != '\0'){
+                if(fragmentado){
+                    strcat(regbuff, l);
+                    if(!escreve(dat, regbuff)){
+                        return false;
+                    }
+                    regbuff[0] = '\0';
+                    fragmentado = false;
+                } else {
+                    //registro completo no buffer, escreva-o
+                    if(!escreve(dat, l)){
+                        return false;
+                    }
+                }
+            } else {
+                //registro está fragmentado entre 2 ou mais blocos OU
+                // esse é o último registro do arquivo OU
+                // o buffer é pequeno d+ mas o buffer terminou mas o registro esta completo
+                if(feof(dados) != 0) {
+                    if(strlen(regbuff) > 0){
+                        strcat(regbuff, l);
+                        if(!escreve(dat, regbuff)){
+                            return false;
+                        }
+                    } else {
+                        if(!escreve(dat, l)){
+                            return false;
+                        }
+                    }
+                } else {
+                    //salva a informação no buffer
+                    strcat(regbuff, l);
+                    fragmentado = true;
+                }
             }
-            l = strtok(NULL, DELIM_REG);
+            l = strtok_r(NULL, DELIM_REG, &p);
         }
     }
 
@@ -67,6 +103,11 @@ bool importa(char* filename){
 //  TRUE - se o registro for escrito com sucesso
 //  FALSE -se algum erro acontecer na escrita
 bool escreve(FILE* arquivo, char *registro){
+    if(true) {
+        FILE* debug = abrir_arquivo("debug.log", "ab");
+        fprintf(debug, "%s\n", registro);
+        fclose(debug);
+    }
     short size = strlen(registro);
     if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
         printf("Erro de escrita - (tamanho)\n");
@@ -82,9 +123,9 @@ bool escreve(FILE* arquivo, char *registro){
 //Le um bloco de dados do arquivo para um buffer de tamanho BLOCO
 //Retorna o número de bytes lidos do arquivo
 unsigned int le_bloco(FILE* arquivo, char* buffer){
-    unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
+    unsigned int lidos = fread(buffer, 1, BLOCO-1, arquivo);
     
-    if(lidos < BLOCO){
+    if(lidos < BLOCO-1){
         if(ferror(arquivo)){
             printf("Erro de leitura do arquivo\n");
             exit(1);
@@ -92,7 +133,9 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
             buffer[lidos] = '\0';
             return lidos;
         }
-    };
+    } else {
+        buffer[BLOCO-1] = '\0'; 
+    }
     return lidos;
 }
 

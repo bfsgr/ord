@@ -2,8 +2,9 @@
 #include <stdbool.h>
 
 #define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo
+#define REGISTRO 2048
 #define DELIM_REG "\n" //
-#define DELIM_FIELD '|' //
+#define DELIM_FIELD "|" //
 
 bool importa(char *filename);
 FILE* abrir_arquivo(char *filename, char* modo);
