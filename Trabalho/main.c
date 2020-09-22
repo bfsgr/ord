@@ -18,17 +18,71 @@ int main(int argc, char **argv) {
         if(importa(argv[2])){
             printf("Importação realizada com sucesso!\n");
         } else {
-            printf("Ocorreu um erro durante a importação :(\n");
+            printf("Ocorreu um erro durante a importação.\n");
         }
         
     } else if (strcmp(argv[1], "-e") == 0) {
         printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n", argv[2]);
+
+        if(executa(argv[2])){
+            printf("Execução finalizada com sucesso!\n");
+        } else {
+            printf("Ocorreu um erro durante a execução.\n");
+        }
 
     } else {
         fprintf(stderr, "Opcao \"%s\" nao suportada!\n", argv[1]);
     }
 
     return 0;
+}
+
+bool executa(char* arquivo){
+    FILE* operacoes = abrir_arquivo(arquivo, "rb");
+    //verifica se o arquivo de dados existe, se sim, abra com r+b
+    FILE* dados = abrir_arquivo("dados.dat", "r");
+    fclose(dados);
+    dados = abrir_arquivo("dados.dat", "r+b");
+
+    char buffer[BLOCO];
+
+    while(le_bloco(operacoes, buffer) > 0){
+        char *l = strtok(buffer, DELIM_LINE);
+
+        while(l != NULL){
+            switch(l[0]){
+                case 'b': 
+                    busca(dados, l);
+                    break;
+                case 'r':
+                    return false;
+                case 'i':
+                    return false;
+                default:
+                    return false;
+            }
+            l = strtok(NULL, DELIM_LINE);
+        }
+    }
+
+
+    fclose(operacoes);
+    fclose(dados);
+    return true;
+}
+
+void busca(FILE* arquivo, char* operador){
+    extrai_argumentos(operador);
+    fseek(arquivo, sizeof(long), SEEK_SET);
+}
+
+void extrai_argumentos(char* operador){
+    unsigned int i = 2;
+    while(operador[i] != '\0'){
+        operador[i-2] = operador[i];
+        i++;
+    }
+    operador[i-2] = '\0';
 }
 
 //Importa os dados de um arquivo arbitrário e os escreve em dados.dat
@@ -46,13 +100,13 @@ bool importa(char* filename){
     char bloco[BLOCO];
 
     while(le_bloco(dados, bloco) > 0){
-        char *l = strtok(bloco, DELIM_REG);
+        char *l = strtok(bloco, DELIM_LINE);
 
         while(l != NULL){
             if(!escreve(dat, l)){
                 return false;
             }
-            l = strtok(NULL, DELIM_REG);
+            l = strtok(NULL, DELIM_LINE);
         }
     }
 
@@ -81,6 +135,7 @@ bool escreve(FILE* arquivo, char *registro){
 
 //Le um bloco de dados do arquivo para um buffer de tamanho BLOCO
 //Retorna o número de bytes lidos do arquivo
+//Encerra a execução em caso de erro de leitura
 unsigned int le_bloco(FILE* arquivo, char* buffer){
     unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
     
@@ -116,7 +171,7 @@ FILE* abrir_arquivo(char *filename, char* modo){
     fp = fopen(filename, modo);
 
     if(fp == NULL){ 
-        printf("Um erro aconteceu ao abrir o arquivo.\n");
+        printf("Um erro aconteceu ao abrir o arquivo %s.\n", filename);
         exit(1);
     } else {
         return fp;
