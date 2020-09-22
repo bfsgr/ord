@@ -12,3 +12,6 @@ unsigned int le_bloco(FILE* arquivo, char* buffer);
 bool escreve(FILE* arquivo, char *registro);
 bool cria_header(FILE* arquivo);
 
+bool executa(char* arquivo);
+void busca(FILE* arquivo, char* operador);
+void extrai_argumentos(char* operador);
