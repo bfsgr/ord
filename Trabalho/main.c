@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
         }
         
     } else if (strcmp(argv[1], "-e") == 0) {
-        printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n", argv[2]);
+        printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n\n", argv[2]);
 
         if(executa(argv[2])){
             printf("Execução finalizada com sucesso!\n");
@@ -74,6 +74,87 @@ bool executa(char* arquivo){
 void busca(FILE* arquivo, char* operador){
     extrai_argumentos(operador);
     fseek(arquivo, sizeof(long), SEEK_SET);
+
+    printf("Buscando registro de chave \"%s\"\n", operador);
+
+    int i = 2;
+    char dados[BLOCO];
+    unsigned int lidos = le_bloco(arquivo, dados);
+    bool terminou = false;
+    bool encontrado = false;
+    int overhead = 0;
+    unsigned short size = 0;
+
+    while(lidos > i){
+
+        while(!terminou){
+            if(overhead > 0){
+                if(overhead > 2){
+                    unsigned char l = dados[overhead-2];
+                    unsigned char h = dados[overhead-1];
+                    size = l | h << 8;
+                    i = overhead;
+                } else {
+                    size |= dados[0] << 8;
+                    i = overhead;
+                }
+            } else {
+                unsigned char l = dados[i-2];
+                unsigned char h = dados[i-1];
+                size = l | h << 8;
+            } 
+            
+            int j = i;
+            while(dados[j] !=  DELIM_FIELD[0]){
+                j++;
+            }
+            dados[j] = '\0';
+
+            if(strcmp(&dados[i], operador) == 0) {
+                if((i + size) > lidos) {
+                    printf("%s|", operador);
+                    printf("%s", &dados[j+1]);
+                    
+                    char final[i + size - lidos];
+                    if(fread(&final, 1, i + size - lidos, arquivo) != i + size - lidos) {
+                        printf("Erro ao ler o arquivo.\n");
+                        exit(1);
+                    }
+                    printf("%s (%i bytes)\n\n", final, size);
+                    i = lidos;
+                    terminou = true;
+                    encontrado = true;
+
+                } else {
+                    printf("%s|", operador);
+                    dados[i + size] = '\0';
+                    printf("%s (%i bytes)\n\n", &dados[j+1], size);
+                    i = lidos;
+                    terminou = true;
+                    encontrado = true;
+                }
+            } else {
+                if((i + size + 2) > lidos) {
+                    terminou = true;
+                    overhead = i + size + 2 - lidos;
+                    if(overhead < 2){
+                        unsigned char l = dados[lidos-1];
+                        size = l;
+                    }
+                } else {
+                    i = i + size + 2;
+                    overhead = 0;
+                }
+            }
+        }
+
+        if(!encontrado){
+            lidos = le_bloco(arquivo, dados);
+            terminou = false;
+        }
+
+    }
+
 }
 
 void extrai_argumentos(char* operador){
@@ -98,16 +179,52 @@ bool importa(char* filename){
     }
     
     char bloco[BLOCO];
+    unsigned int lidos = le_bloco(dados, bloco);
+    char *p = bloco;
+    char minibuffer[REGISTRO];
+    bool frag = false;
 
-    while(le_bloco(dados, bloco) > 0){
-        char *l = strtok(bloco, DELIM_LINE);
+    while(lidos > 0){
+        if(!frag){
+            char *l = strtok_r(bloco, DELIM_LINE, &p);
 
-        while(l != NULL){
-            if(!escreve(dat, l)){
-                return false;
+            while(l != NULL){
+                if(*p == '\0') {
+                    //fragmentação de registro entre buffers
+                    strcpy(minibuffer, l); 
+                    frag = true;
+                } else {
+                    if(!escreve(dat, l)){
+                        return false;
+                    }
+                }
+                l = strtok_r(NULL, DELIM_LINE, &p);
             }
-            l = strtok(NULL, DELIM_LINE);
+        } else {
+            char *l = strtok_r(bloco, DELIM_LINE, &p);
+
+            if(l != NULL){
+                if(!escreve(dat, strcat(minibuffer, l))){
+                    return false;
+                }
+            }
+            l = strtok_r(NULL, DELIM_LINE, &p);
+            while(l != NULL){
+                if(*p == '\0') {
+                    //fragmentação de registro entre buffers
+                    strcpy(minibuffer, l); 
+                    frag = true;
+                } else {
+                    if(!escreve(dat, l)){
+                        return false;
+                    }
+                    frag = false;
+                }
+                l = strtok_r(NULL, DELIM_LINE, &p);
+            }
         }
+
+        lidos = le_bloco(dados, bloco);
     }
 
     fclose(dat);
@@ -137,9 +254,9 @@ bool escreve(FILE* arquivo, char *registro){
 //Retorna o número de bytes lidos do arquivo
 //Encerra a execução em caso de erro de leitura
 unsigned int le_bloco(FILE* arquivo, char* buffer){
-    unsigned int lidos = fread(buffer, 1, BLOCO, arquivo);
+    unsigned int lidos = fread(buffer, 1, BLOCO-1, arquivo);
     
-    if(lidos < BLOCO){
+    if(lidos < BLOCO-1){
         if(ferror(arquivo)){
             printf("Erro de leitura do arquivo\n");
             exit(1);
@@ -147,7 +264,9 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
             buffer[lidos] = '\0';
             return lidos;
         }
-    };
+    } else {
+        buffer[BLOCO-1] = '\0';
+    }
     return lidos;
 }
 

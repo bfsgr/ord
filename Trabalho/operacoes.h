@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define BLOCO 512 //Tamanho do bloco bufferizado do arquivo
+#define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo, buffers pequenos causam problemas
+#define REGISTRO 1024
 #define DELIM_LINE "\n" //
 #define DELIM_FIELD "|" //
 
