@@ -241,11 +241,6 @@ bool importa(char* filename){
 //  TRUE - se o registro for escrito com sucesso
 //  FALSE -se algum erro acontecer na escrita
 bool escreve(FILE* arquivo, char *registro){
-    if(true) {
-        FILE* debug = abrir_arquivo("debug.log", "ab");
-        fprintf(debug, "%s\n", registro);
-        fclose(debug);
-    }
     short size = strlen(registro);
     if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
         printf("Erro de escrita - (tamanho)\n");
