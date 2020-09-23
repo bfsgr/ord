@@ -13,5 +13,5 @@ bool escreve(FILE* arquivo, char *registro);
 bool cria_header(FILE* arquivo);
 
 bool executa(char* arquivo);
-void busca(FILE* arquivo, char* operador);
+long busca(FILE* arquivo, char* chave, bool printa);
 void extrai_argumentos(char* operador);

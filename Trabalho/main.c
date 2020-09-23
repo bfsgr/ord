@@ -52,7 +52,7 @@ bool executa(char* arquivo){
         while(l != NULL){
             switch(l[0]){
                 case 'b': 
-                    busca(dados, l);
+                    busca(dados, l, true);
                     break;
                 case 'r':
                     return false;
@@ -71,22 +71,23 @@ bool executa(char* arquivo){
     return true;
 }
 
-void busca(FILE* arquivo, char* operador){
-    extrai_argumentos(operador);
+long busca(FILE* arquivo, char* chave, bool printa){
+    extrai_argumentos(chave);
     fseek(arquivo, sizeof(long), SEEK_SET);
 
-    printf("Buscando registro de chave \"%s\"\n", operador);
+    printa ? printf("Buscando registro de chave \"%s\"\n", chave) : false;
 
     int i = 2;
     char dados[BLOCO];
     unsigned int lidos = le_bloco(arquivo, dados);
+    int blocos = 0;
     bool terminou = false;
     bool encontrado = false;
     int overhead = 0;
     unsigned short size = 0;
 
     while(lidos > 0 && !encontrado){
-
+        
         while(!terminou){
             if(overhead > 0){
                 if(overhead > 2){
@@ -110,26 +111,24 @@ void busca(FILE* arquivo, char* operador){
             }
             dados[j] = '\0';
 
-            if(strcmp(&dados[i], operador) == 0) {
+            if(strcmp(&dados[i], chave) == 0) {
                 if((i + size) > lidos) {
-                    printf("%s|", operador);
-                    printf("%s", &dados[j+1]);
+                    printa ? printf("%s|", chave) : false;
+                    printa ? printf("%s", &dados[j+1]) : false;
                     
                     char final[i + size - lidos];
                     if(fread(&final, 1, i + size - lidos, arquivo) != i + size - lidos) {
                         printf("Erro ao ler o arquivo.\n");
                         exit(1);
                     }
-                    printf("%s (%i bytes)\n\n", final, size);
-                    i = lidos;
+                    printa ? printf("%s (%i bytes)\n\n", final, size) : false;
                     terminou = true;
                     encontrado = true;
 
                 } else {
-                    printf("%s|", operador);
+                    printa ? printf("%s|", chave) : false;
                     dados[i + size] = '\0';
-                    printf("%s (%i bytes)\n\n", &dados[j+1], size);
-                    i = lidos;
+                    printa ? printf("%s (%i bytes)\n\n", &dados[j+1], size) : false;
                     terminou = true;
                     encontrado = true;
                 }
@@ -151,12 +150,16 @@ void busca(FILE* arquivo, char* operador){
         if(!encontrado){
             lidos = le_bloco(arquivo, dados);
             terminou = false;
+            lidos == BLOCO-1 ? blocos++ : false;
         }
 
     }
 
     if(!encontrado){
-        printf("Erro: registro não encontrado.\n\n");
+        printa ? printf("Erro: registro não encontrado.\n\n") : false;
+        return -1;
+    } else {
+        return (BLOCO-1) * blocos + i + 6;
     }
 
 }
