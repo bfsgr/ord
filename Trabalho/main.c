@@ -85,7 +85,7 @@ void busca(FILE* arquivo, char* operador){
     int overhead = 0;
     unsigned short size = 0;
 
-    while(lidos > i){
+    while(lidos > 0 && !encontrado){
 
         while(!terminou){
             if(overhead > 0){
@@ -153,6 +153,10 @@ void busca(FILE* arquivo, char* operador){
             terminou = false;
         }
 
+    }
+
+    if(!encontrado){
+        printf("Erro: registro não encontrado.\n\n");
     }
 
 }
