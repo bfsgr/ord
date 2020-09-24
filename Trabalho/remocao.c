@@ -24,7 +24,7 @@ bool remover(FILE* arquivo, char* chave){
     return false;
 }
 
-bool insere_led(FILE* arquivo, int offset){
+static bool insere_led(FILE* arquivo, int offset){
     int head = 0;
 
     if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }

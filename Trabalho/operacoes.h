@@ -18,6 +18,6 @@ int busca(FILE* arquivo, char* chave, bool printa);
 short extrai_argumentos(char* operador);
 
 bool remover(FILE* arquivo, char* chave);
-bool insere_led(FILE* arquivo, int offset);
+static bool insere_led(FILE* arquivo, int offset);
 bool inserir(FILE* arquivo, char* chave);
 
