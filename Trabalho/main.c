@@ -55,9 +55,12 @@ bool executa(char* arquivo){
                     busca(dados, l, true);
                     break;
                 case 'r':
-                    return false;
+                    if( !remover(dados, l) )
+                        printf("Erro: Registro não encontrado!\n\n");
+                    break;
                 case 'i':
-                    return false;
+                    inserir(dados, l);
+                    break;
                 default:
                     return false;
             }
@@ -71,9 +74,113 @@ bool executa(char* arquivo){
     return true;
 }
 
-long busca(FILE* arquivo, char* chave, bool printa){
+bool inserir(FILE* arquivo, char* chave){
+    short tamanho = extrai_argumentos(chave);
+    if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }
+    
+    int head = 0;
+    if(fread(&head, sizeof(head), 1, arquivo) != 1) { return false; }
+
+    bool fit = false;
+    int last_head = 0;
+
+    short size = 0;
+
+    if(head == EOF){
+        //escreva no final
+        if(fseek(arquivo, 0, SEEK_END) != 0){ return false; }
+        escreve(arquivo, chave);
+        printf("Inserindo: \"%s\"\n", chave);
+        printf("Inserido %i bytes no final\n\n", tamanho);
+    } else {
+        while(!fit && head != EOF){
+            //vá para o offset de HEAD
+            if(fseek(arquivo, head, SEEK_SET) != 0){ return false; }
+            //leia o tamanho livre
+            if(fread(&size, sizeof(size), 1, arquivo) != 1) { return false; }
+            
+            if(size >= tamanho){
+                fit = true;
+            } else {
+                last_head = head;
+                //pule o id "*|"
+                if(fseek(arquivo, 2, SEEK_CUR) != 0){ return false; }
+                if(fread(&head, sizeof(head), 1, arquivo) != 1) { return false; }
+            }
+        }
+
+        if(fit){
+            //pule o id "*|"
+            if(fseek(arquivo, 2, SEEK_CUR) != 0){ return false; }
+            int prox = 0;
+            if(fread(&prox, sizeof(prox), 1, arquivo) != 1) { return false; }
+
+            if(fseek(arquivo, last_head+4, SEEK_SET) != 0){ return false; }
+            fwrite(&prox, sizeof(prox), 1, arquivo);
+
+            if(fseek(arquivo, head, SEEK_SET) != 0){ return false; }
+            escreve(arquivo, chave);
+            printf("Inserindo: \"%s\"\n", chave);
+            printf("Inserido %i bytes em %i\n", tamanho, head);
+            printf("Sobra: %i bytes\n\n", size - tamanho);
+        } else {
+            if(fseek(arquivo, 0, SEEK_END) != 0){ return false; }
+            escreve(arquivo, chave);
+            printf("Inserindo: \"%s\"\n", chave);
+            printf("Inserido %i bytes no final\n\n", tamanho);
+        }
+    }
+
+    return true;
+}
+
+bool remover(FILE* arquivo, char* chave){
+    int offset = busca(arquivo, chave, false);
+    
+    if(offset >= 0){
+        if(fseek(arquivo, offset, SEEK_SET) != 0){ return false; }
+        int nulo = -1; 
+        short size = 0;
+        if(fread(&size, sizeof(size), 1, arquivo) != 1) { return false; }
+
+        if(fputc(REMOVED, arquivo) == EOF) { return false; };
+        if(fputc(DELIM_FIELD[0], arquivo) == EOF) { return false; };
+        if(fwrite(&nulo, sizeof(nulo), 1, arquivo) != 1) { return false; };
+
+        if( !insere_led(arquivo, offset) ) { return false; }
+
+        printf("Registro removido! (%i bytes)\n", size);
+        printf("Offset: %i\n\n", offset);
+
+        return true;
+    } 
+
+    return false;
+}
+
+bool insere_led(FILE* arquivo, int offset){
+    int head = 0;
+
+    if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }
+    if(fread(&head, sizeof(head), 1, arquivo) != 1) { return false; }
+
+    if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }
+    if(fwrite(&offset, sizeof(offset), 1, arquivo) != 1) { return false; }
+
+    if(head != -1){
+        if(fseek(arquivo, offset+4, SEEK_SET) != 0){ return false; }
+        if(fwrite(&head, sizeof(offset), 1, arquivo) != 1) { return false; }
+    }
+
+    return true;
+}
+
+int busca(FILE* arquivo, char* chave, bool printa){
     extrai_argumentos(chave);
-    fseek(arquivo, sizeof(long), SEEK_SET);
+    
+    if(fseek(arquivo, sizeof(int), SEEK_SET) != 0){ 
+        return false;
+    }
 
     printa ? printf("Buscando registro de chave \"%s\"\n", chave) : false;
 
@@ -159,18 +266,19 @@ long busca(FILE* arquivo, char* chave, bool printa){
         printa ? printf("Erro: registro não encontrado.\n\n") : false;
         return -1;
     } else {
-        return (BLOCO-1) * blocos + i + 6;
+        return (BLOCO-1) * blocos + i + 2;
     }
 
 }
 
-void extrai_argumentos(char* operador){
+short extrai_argumentos(char* operador){
     unsigned int i = 2;
     while(operador[i] != '\0'){
         operador[i-2] = operador[i];
         i++;
     }
     operador[i-2] = '\0';
+    return i-2;
 }
 
 //Importa os dados de um arquivo arbitrário e os escreve em dados.dat
@@ -280,7 +388,7 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
 //Retorna TRUE se o header for criado com sucesso
 //Retorna FALSE se ocorrer um problema de escrita
 bool cria_header(FILE* arquivo){
-    long head = 0;
+    int head = -1;
     if(fwrite(&head, sizeof(head), 1, arquivo) != 1){
         printf("Erro ao criar o header.\n");
         return false;

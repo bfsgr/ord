@@ -3,8 +3,9 @@
 
 #define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo
 #define REGISTRO 2048
-#define DELIM_REG "\n" //
-#define DELIM_FIELD "|" //
+#define DELIM_REG "\n" 
+#define DELIM_FIELD "|" 
+#define REMOVED '*'
 
 bool importa(char *filename);
 FILE* abrir_arquivo(char *filename, char* modo);
@@ -13,5 +14,10 @@ bool escreve(FILE* arquivo, char *registro);
 bool cria_header(FILE* arquivo);
 
 bool executa(char* arquivo);
-long busca(FILE* arquivo, char* chave, bool printa);
-void extrai_argumentos(char* operador);
+int busca(FILE* arquivo, char* chave, bool printa);
+short extrai_argumentos(char* operador);
+
+bool remover(FILE* arquivo, char* chave);
+bool insere_led(FILE* arquivo, int offset);
+bool inserir(FILE* arquivo, char* chave);
+
