@@ -24,14 +24,14 @@ bool importa(char* filename){
             if(*p != '\0'){
                 if(fragmentado){
                     strcat(regbuff, l);
-                    if(!escreve(dat, regbuff)){
+                    if(!escreve(dat, regbuff, strlen(regbuff))){
                         return false;
                     }
                     regbuff[0] = '\0';
                     fragmentado = false;
                 } else {
                     //registro completo no buffer, escreva-o
-                    if(!escreve(dat, l)){
+                    if(!escreve(dat, l, strlen(l))){
                         return false;
                     }
                 }
@@ -42,11 +42,11 @@ bool importa(char* filename){
                 if(feof(dados) != 0) {
                     if(strlen(regbuff) > 0){
                         strcat(regbuff, l);
-                        if(!escreve(dat, regbuff)){
+                        if(!escreve(dat, regbuff, strlen(regbuff))){
                             return false;
                         }
                     } else {
-                        if(!escreve(dat, l)){
+                        if(!escreve(dat, l, strlen(l))){
                             return false;
                         }
                     }
@@ -71,9 +71,8 @@ bool importa(char* filename){
 //Retorno:
 //  TRUE - se o registro for escrito com sucesso
 //  FALSE -se algum erro acontecer na escrita
-bool escreve(FILE* arquivo, char *registro){
-    short size = strlen(registro);
-    if(fwrite(&size, sizeof(size), 1, arquivo) != 1){
+bool escreve(FILE* arquivo, char *registro, short tamanho){
+    if(fwrite(&tamanho, sizeof(tamanho), 1, arquivo) != 1){
         printf("Erro de escrita - (tamanho)\n");
         return false;
     }
