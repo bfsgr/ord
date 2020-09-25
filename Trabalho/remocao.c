@@ -2,7 +2,7 @@
 
 bool remover(FILE* arquivo, char* chave){
     int offset = busca(arquivo, chave, false);
-    
+    printf("Remoção do resgistro de chave \"%s\"\n", chave);
     if(offset >= 0){
         if(fseek(arquivo, offset, SEEK_SET) != 0){ return false; }
         int nulo = -1; 
