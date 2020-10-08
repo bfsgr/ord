@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "../include/operacoes.h"
 
 int main(int argc, char **argv) {
