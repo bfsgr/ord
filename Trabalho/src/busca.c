@@ -1,5 +1,5 @@
 
-#include "./operacoes.h"
+#include "../include/operacoes.h"
 
 int busca(FILE* arquivo, char* chave, bool printa){
     extrai_argumentos(chave);

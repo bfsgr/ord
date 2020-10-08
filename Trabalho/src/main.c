@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include "./importacao.c"
-#include "./busca.c"
-#include "./remocao.c"
-#include "./insercao.c"
+#include "../include/operacoes.h"
 
 int main(int argc, char **argv) {
 

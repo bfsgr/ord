@@ -1,4 +1,4 @@
-#include "./operacoes.h"
+#include "../include/operacoes.h"
 
 //Importa os dados de um arquivo arbitrário e os escreve em dados.dat
 //Retorno:

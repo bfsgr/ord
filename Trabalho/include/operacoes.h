@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <string.h>
 
 #define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo
 #define REGISTRO 2048

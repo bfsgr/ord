@@ -1,4 +1,4 @@
-#include "./operacoes.h"
+#include "../include/operacoes.h"
 
 bool inserir(FILE* arquivo, char* chave){
     short tamanho = extrai_argumentos(chave);

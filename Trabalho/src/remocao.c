@@ -1,4 +1,4 @@
-#include "./operacoes.h"
+#include "../include/operacoes.h"
 
 bool remover(FILE* arquivo, char* chave){
     int offset = busca(arquivo, chave, false);
