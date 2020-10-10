@@ -24,18 +24,14 @@ int busca(FILE* arquivo, char* chave, bool printa){
         while(!terminou){
             if(overhead > 0){
                 if(overhead > 2){
-                    unsigned char l = dados[overhead-2];
-                    unsigned char h = dados[overhead-1];
-                    size = l | h << 8;
+                    size = (unsigned char) dados[overhead-2] | (unsigned char) dados[overhead-1] << 8;
                     i = overhead;
                 } else {
-                    size |= dados[0] << 8;
+                    size |= (unsigned char) dados[0] << 8;
                     i = overhead;
                 }
             } else {
-                unsigned char l = dados[i-2];
-                unsigned char h = dados[i-1];
-                size = l | h << 8;
+                size = (unsigned char) dados[i-2] | (unsigned char) dados[i-1] << 8;
             } 
             
             int j = i;
@@ -70,8 +66,7 @@ int busca(FILE* arquivo, char* chave, bool printa){
                     terminou = true;
                     overhead = i + size + 2 - lidos;
                     if(overhead < 2){
-                        unsigned char l = dados[lidos-1];
-                        size = l;
+                        size = (unsigned char) dados[lidos-1];;
                     }
                 } else {
                     i = i + size + 2;
