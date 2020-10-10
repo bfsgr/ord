@@ -39,14 +39,18 @@ bool executa(char* arquivo){
     //verifica se o arquivo de dados existe, se sim, abra com r+b
     FILE* dados = abrir_arquivo("dados.dat", "r");
     fclose(dados);
-    dados = abrir_arquivo("dados.dat", "r+b");
-
+    dados = abrir_arquivo("dados.dat", "r+");
+    
+    //cria um buffer de tamanho BLOCO
     char buffer[BLOCO];
 
+    //enquanto for possivel ler blocos faça
     while(le_bloco(operacoes, buffer) > 0){
+        //quebre uma linha
         char *l = strtok(buffer, DELIM_REG);
-
+        //enquanto houver linhas
         while(l != NULL){
+            //defina o caso da operação
             switch(l[0]){
                 case 'b': 
                     busca(dados, l, true);
@@ -61,11 +65,12 @@ bool executa(char* arquivo){
                 default:
                     return false;
             }
+            //leia a próxima linha
             l = strtok(NULL, DELIM_REG);
         }
     }
 
-
+    //feche os arquivos
     fclose(operacoes);
     fclose(dados);
     return true;
