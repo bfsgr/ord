@@ -5,7 +5,7 @@
 //  TRUE - se a importação ocorrer com sucesso
 //  FALSE - se algum erro acontecer
 bool importa(char* filename){
-    FILE* dados = abrir_arquivo(filename, "rb");
+    FILE* dados = abrir_arquivo(filename, "r");
     FILE* dat = abrir_arquivo("dados.dat", "w");
 
     if(!cria_header(dat)){
@@ -15,20 +15,34 @@ bool importa(char* filename){
     char bloco[BLOCO];
     char regbuff[REGISTRO];
     regbuff[0] = '\0';
-    char *p = NULL;
+    char *p = bloco;
     bool fragmentado = false;
 
     while(le_bloco(dados, bloco) > 0){
+        char *teste = strchr(p, DELIM_REG[0]);
         char *l = strtok_r(bloco, DELIM_REG, &p);
         while(l != NULL){
             if(*p != '\0'){
                 if(fragmentado){
-                    strcat(regbuff, l);
-                    if(!escreve(dat, regbuff, strlen(regbuff))){
-                        return false;
+                    //strtok não detecta delimitador no começo da string
+                    //aqui esse caso é tratado
+                    if(bloco[0] == '\n'){
+                        if(!escreve(dat, regbuff, strlen(regbuff))){
+                            return false;
+                        }
+                        regbuff[0] = '\0';
+                        fragmentado = false;
+                        if(!escreve(dat, l, strlen(l))){
+                            return false;
+                        }
+                    } else {
+                        strcat(regbuff, l);
+                        if(!escreve(dat, regbuff, strlen(regbuff))){
+                            return false;
+                        }
+                        regbuff[0] = '\0';
+                        fragmentado = false;
                     }
-                    regbuff[0] = '\0';
-                    fragmentado = false;
                 } else {
                     //registro completo no buffer, escreva-o
                     if(!escreve(dat, l, strlen(l))){
@@ -50,12 +64,25 @@ bool importa(char* filename){
                             return false;
                         }
                     }
+                    fragmentado = false;
                 } else {
-                    //salva a informação no buffer
-                    strcat(regbuff, l);
-                    fragmentado = true;
+                    //3.
+                    if(teste != NULL){
+                        if(strlen(regbuff) > 0){
+                            strcat(regbuff, l);
+                            escreve(dat, regbuff, strlen(regbuff));
+                        } else {
+                            escreve(dat, l, strlen(l));
+                        }
+                    } else {
+                        //2.
+                        //fragmentação entre buffers
+                        strcat(regbuff, l);
+                        fragmentado = true;
+                    }
                 }
             }
+            teste = strchr(p, DELIM_REG[0]);
             l = strtok_r(NULL, DELIM_REG, &p);
         }
     }

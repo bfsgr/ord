@@ -1,7 +1,82 @@
-r 280
-r 27
-r 302
-r 145
-r 184
-r 230
-r 376
+i 2|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 3|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 4|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 5|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 6|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 7|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 8|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 9|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 10|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 11|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 12|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 13|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 14|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 15|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 16|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 17|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 18|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 19|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 20|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 21|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 22|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 23|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 24|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 25|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 26|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 27|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 28|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 29|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 30|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 31|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 32|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 33|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 34|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 35|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 36|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 37|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 38|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 39|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 40|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 41|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 42|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 43|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 44|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 45|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 46|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 47|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 48|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 49|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 50|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 51|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 52|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 53|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 54|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 55|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 56|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 57|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 58|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 59|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 60|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 61|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 62|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 63|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 64|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 65|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 66|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 67|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 68|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 69|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 70|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|
+i 71|Queen of Air and Darkness|Fantasy|Cassandra Clare|4.36|912|2018/12/04|
+i 72|End of Watch|Mystery & Thriller|Stephen King|4.08|432|2016/06/07|
+i 73|Grey|Romance|E.L. James|3.79|576|2015/06/18|
+i 74|The Nerdy Nummies Cookbook: Sweet Treats for the Geek in All of Us|Food & Cookbooks|Rosanna Pansino|4.4|256|2015/11/03|
+i 75|Bossypants|Humor|Tina Fey|3.96|283|2011/04/05|
+i 76|The Long Haul|Children's|Jeff Kinney|4.34|224|2014/11/04|
+i 77|Deadline|Horror|Mira Grant|4.1|584|2011/06/01|
+i 78|Maybe Someday|Romance|Colleen Hoover|4.29|385|2014/03/18|
+i 79|Memories|Poetry|Lang Leav|4.11|256|2015/10/06|
+i 80|Frostbite: The Graphic Novel|Graphic Novels & Comics|Richelle Mead, Emma Vieceli, Leigh Dragoon|4.32|156|2012/05/24|
+i 81|Lover Reborn|Romance|J.R. Ward|4.35|572|2012/03/27|
+i 82|Ready Player One|Science Fiction|Ernest Cline|4.27|374|2011/08/16|
+i 83|Divergent|Fiction|Veronica Roth|4.2|487|2011/04/25|

@@ -22,4 +22,5 @@ short extrai_argumentos(char* operador);
 bool remover(FILE* arquivo, char* chave);
 static bool insere_led(FILE* arquivo, int offset);
 bool inserir(FILE* arquivo, char* chave);
+static void definir_op(FILE* arquivo, char* linha);
 

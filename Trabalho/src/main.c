@@ -39,35 +39,77 @@ bool executa(char* arquivo){
     //verifica se o arquivo de dados existe, se sim, abra com r+b
     FILE* dados = abrir_arquivo("dados.dat", "r");
     fclose(dados);
-    dados = abrir_arquivo("dados.dat", "r+");
+    dados = abrir_arquivo("dados.dat", "r+b");
     
     //cria um buffer de tamanho BLOCO
     char buffer[BLOCO];
+    char opbuff[REGISTRO];
+    char *prox = buffer;
+    bool fragmentado = false;
+
+    unsigned int lidos = le_bloco(operacoes, buffer);
 
     //enquanto for possivel ler blocos faça
-    while(le_bloco(operacoes, buffer) > 0){
+    while(lidos > 0){
+        char *teste = strchr(prox, DELIM_REG[0]);
         //quebre uma linha
-        char *l = strtok(buffer, DELIM_REG);
+        char *line = strtok_r(buffer, DELIM_REG, &prox);
         //enquanto houver linhas
-        while(l != NULL){
-            //defina o caso da operação
-            switch(l[0]){
-                case 'b': 
-                    busca(dados, l, true);
-                    break;
-                case 'r':
-                    if( !remover(dados, l) )
-                        printf("Erro: Registro não encontrado!\n\n");
-                    break;
-                case 'i':
-                    inserir(dados, l);
-                    break;
-                default:
-                    return false;
+        while(line != NULL){
+            //se houver próximo
+            if(*prox != '\0'){
+                if(fragmentado){
+                    //strtok não detecta delimitador no começo da string
+                    //aqui esse caso é tratado
+                    if(buffer[0] == '\n'){
+                        definir_op(dados, opbuff);
+                        opbuff[0] = '\0';
+                        fragmentado = false;
+                        definir_op(dados, line);
+                    } else {
+                        strcat(opbuff, line);
+                        definir_op(dados, opbuff);
+                        opbuff[0] = '\0';
+                        fragmentado = false;
+                    }
+                } else {
+                    definir_op(dados, line);
+                }
+            } else {
+                //não há próximo
+                //1. o arquivo acabou
+                //2. o registro foi fragmentado entre os buffers
+                //3. o registro coube perfeitamente no buffer e ele acabou
+                if(feof(operacoes) != 0){
+                    //sobrou algo no buffer de operações?
+                    if(strlen(opbuff) > 0){
+                        strcat(opbuff, line);
+                        definir_op(dados, opbuff);
+                    } else {
+                        definir_op(dados, line);
+                    }
+                } else {
+                    //3.
+                    if(teste != NULL){
+                        if(strlen(opbuff) > 0){
+                            strcat(opbuff, line);
+                            definir_op(dados, opbuff);
+                        } else {
+                            definir_op(dados, line);
+                        }
+                    } else {
+                        //2.
+                        //fragmentação entre buffers
+                        strcat(opbuff, line);
+                        fragmentado = true;
+                    }
+                }
             }
+            teste = strchr(prox, DELIM_REG[0]);
             //leia a próxima linha
-            l = strtok(NULL, DELIM_REG);
+            line = strtok_r(NULL, DELIM_REG, &prox);
         }
+        lidos = le_bloco(operacoes, buffer);
     }
 
     //feche os arquivos
@@ -76,3 +118,22 @@ bool executa(char* arquivo){
     return true;
 }
 
+static void definir_op(FILE* arquivo, char* linha){
+    //defina o caso da operação
+    switch(linha[0]){
+        case 'b': 
+            busca(arquivo, linha, true);
+            break;
+        case 'r':
+            if( !remover(arquivo, linha) )
+                printf("Erro: Registro não encontrado!\n\n");
+            break;
+        case 'i':
+            inserir(arquivo, linha);
+            break;
+        default:
+            printf("Erro: Operação inválida!\n");
+            exit(1);
+            break;
+    }
+}
