@@ -15,76 +15,58 @@ bool importa(char* filename){
     char bloco[BLOCO];
     char regbuff[REGISTRO];
     regbuff[0] = '\0';
-    char *p = bloco;
     bool fragmentado = false;
+    int iter = 0;
+    
+    unsigned int lidos = le_bloco(dados, bloco);
 
-    while(le_bloco(dados, bloco) > 0){
-        char *teste = strchr(p, DELIM_REG[0]);
-        char *l = strtok_r(bloco, DELIM_REG, &p);
-        while(l != NULL){
-            if(*p != '\0'){
-                if(fragmentado){
-                    //strtok não detecta delimitador no começo da string
-                    //aqui esse caso é tratado
-                    if(bloco[0] == '\n'){
-                        if(!escreve(dat, regbuff, strlen(regbuff))){
-                            return false;
-                        }
+    while(lidos > 0){
+        while(iter < lidos){
+            //salve o começo do registro atual
+            int start = iter;
+            //itere até encontrar um \n (Delimitador de registro)
+            while(iter < lidos && bloco[iter] != DELIM_REG[0] ){
+                iter++;
+            }
+
+            //estamos no final do bloco?
+            if(iter == lidos){
+                //o registro está completo?
+                if(bloco[iter] == DELIM_REG[0]){
+                    //marque o final e escreva o registro no disco
+                    bloco[iter] = '\0';
+                    //A flag de fragmentação está ligada?
+                    if(fragmentado){
+                        strcat(regbuff, &bloco[start]);
+                        escreve(dat, regbuff, strlen(regbuff));
                         regbuff[0] = '\0';
                         fragmentado = false;
-                        if(!escreve(dat, l, strlen(l))){
-                            return false;
-                        }
                     } else {
-                        strcat(regbuff, l);
-                        if(!escreve(dat, regbuff, strlen(regbuff))){
-                            return false;
-                        }
-                        regbuff[0] = '\0';
-                        fragmentado = false;
+                        escreve(dat, &bloco[start], iter - start);
                     }
+                    iter++;
                 } else {
-                    //registro completo no buffer, escreva-o
-                    if(!escreve(dat, l, strlen(l))){
-                        return false;
-                    }
+                    //o registro está fragmentado entre blocos
+                    fragmentado = true;
+                    strcat(regbuff, &bloco[start]);
                 }
             } else {
-                //registro está fragmentado entre 2 ou mais blocos OU
-                // esse é o último registro do arquivo OU
-                // o buffer é pequeno d+ mas o buffer terminou mas o registro esta completo
-                if(feof(dados) != 0) {
-                    if(strlen(regbuff) > 0){
-                        strcat(regbuff, l);
-                        if(!escreve(dat, regbuff, strlen(regbuff))){
-                            return false;
-                        }
-                    } else {
-                        if(!escreve(dat, l, strlen(l))){
-                            return false;
-                        }
-                    }
+                //o registro está interiamente disponível na memória, escrevá-o
+                bloco[iter] = '\0';
+                //A flag de fragmentação está ligada?
+                if(fragmentado){
+                    strcat(regbuff, &bloco[start]);
+                    escreve(dat, regbuff, strlen(regbuff));
+                    regbuff[0] = '\0';
                     fragmentado = false;
                 } else {
-                    //3.
-                    if(teste != NULL){
-                        if(strlen(regbuff) > 0){
-                            strcat(regbuff, l);
-                            escreve(dat, regbuff, strlen(regbuff));
-                        } else {
-                            escreve(dat, l, strlen(l));
-                        }
-                    } else {
-                        //2.
-                        //fragmentação entre buffers
-                        strcat(regbuff, l);
-                        fragmentado = true;
-                    }
+                    escreve(dat, &bloco[start], iter - start);
                 }
+                iter++;
             }
-            teste = strchr(p, DELIM_REG[0]);
-            l = strtok_r(NULL, DELIM_REG, &p);
         }
+        lidos = le_bloco(dados, bloco);
+        iter = 0;
     }
 
     fclose(dat);
