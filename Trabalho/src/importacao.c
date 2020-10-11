@@ -46,9 +46,18 @@ bool importa(char* filename){
                     }
                     iter++;
                 } else {
-                    //o registro está fragmentado entre blocos
-                    fragmentado = true;
-                    strcat(regbuff, &bloco[start]);
+                    //o registro está fragmentado entre blocos ou é o fim do arquivo
+                    if(feof(dados) != 0){
+                        if(strlen(regbuff) > 0){
+                            strcat(regbuff, &bloco[start]);
+                            escreve(dat, regbuff, strlen(regbuff));
+                        }else {
+                            escreve(dat, &bloco[start], iter - start);
+                        }
+                    } else {
+                        fragmentado = true;
+                        strcat(regbuff, &bloco[start]);
+                    }
                 }
             } else {
                 //o registro está interiamente disponível na memória, escrevá-o
