@@ -1,11 +1,11 @@
 #include "../include/operacoes.h"
 
-bool inserir(FILE* arquivo, char* chave){
+void inserir(FILE* arquivo, char* chave){
     short tamanho = extrai_argumentos(chave);
-    if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }
+    fseek(arquivo, 0, SEEK_SET);
     
     int head = 0;
-    if(fread(&head, sizeof(head), 1, arquivo) != 1) { return false; }
+    fread(&head, sizeof(head), 1, arquivo);
 
     bool fit = false;
     int last_head = 0;
@@ -14,24 +14,24 @@ bool inserir(FILE* arquivo, char* chave){
 
     if(head == EOF){
         //escreva no final
-        if(fseek(arquivo, 0, SEEK_END) != 0){ return false; }
+        fseek(arquivo, 0, SEEK_END);
         escreve(arquivo, chave, tamanho);
         printf("Inserindo: \"%s\"\n", chave);
         printf("Inserido %i bytes no final\n\n", tamanho);
     } else {
         while(!fit && head != EOF){
             //vá para o offset de HEAD
-            if(fseek(arquivo, head, SEEK_SET) != 0){ return false; }
+            fseek(arquivo, head, SEEK_SET);
             //leia o tamanho livre
-            if(fread(&size, sizeof(size), 1, arquivo) != 1) { return false; }
+            fread(&size, sizeof(size), 1, arquivo);
             
             if(size >= tamanho+2){
                 fit = true;
             } else {
                 last_head = head;
                 //pule o id "*|"
-                if(fseek(arquivo, 2, SEEK_CUR) != 0){ return false; }
-                if(fread(&head, sizeof(head), 1, arquivo) != 1) { return false; }
+                fseek(arquivo, 2, SEEK_CUR);
+                fread(&head, sizeof(head), 1, arquivo);
             }
         }
 
@@ -42,26 +42,26 @@ bool inserir(FILE* arquivo, char* chave){
             printf("Tamanho livre: %i bytes\n", size);
             printf("Tamanho da sobra: %i bytes\n", sobra);
             if(sobra >= 50){
-                if(fseek(arquivo, -2 , SEEK_CUR) != 0){ return false; }
+                fseek(arquivo, -2 , SEEK_CUR);
                 fwrite(&sobra, sizeof(short), 1, arquivo);
-                if(fseek(arquivo, head + sobra + 2, SEEK_SET) != 0){ return false; }
+                fseek(arquivo, head + sobra + 2, SEEK_SET);
                 escreve(arquivo, chave, tamanho);
                 printf("Inserido %i bytes em %i (%i+%i)\n\n", tamanho, head+sobra, head, sobra);
             } else {
                 //pule o id "*|"
-                if(fseek(arquivo, 2, SEEK_CUR) != 0){ return false; }
+                fseek(arquivo, 2, SEEK_CUR);
                 int prox = 0;
-                if(fread(&prox, sizeof(prox), 1, arquivo) != 1) { return false; }
+                fread(&prox, sizeof(prox), 1, arquivo);
 
                 if(last_head == 0){
-                    if(fseek(arquivo, 0, SEEK_SET) != 0){ return false; }
+                    fseek(arquivo, 0, SEEK_SET);
                     fwrite(&prox, sizeof(prox), 1, arquivo);
                 } else {
-                    if(fseek(arquivo, last_head+4, SEEK_SET) != 0){ return false; }
+                    fseek(arquivo, last_head+4, SEEK_SET);
                     fwrite(&prox, sizeof(prox), 1, arquivo);
                 }
 
-                if(fseek(arquivo, head, SEEK_SET) != 0){ return false; }
+                fseek(arquivo, head, SEEK_SET);
             
                 escreve(arquivo, chave, size);
                 if(tamanho < size) { fputc('\0', arquivo); }
@@ -69,13 +69,11 @@ bool inserir(FILE* arquivo, char* chave){
                 printf("Inserido %i bytes em %i (0x%x)\n\n", tamanho, head, head);
             }
         } else {
-            if(fseek(arquivo, 0, SEEK_END) != 0){ return false; }
+            fseek(arquivo, 0, SEEK_END);
             escreve(arquivo, chave, tamanho);
             printf("Inserindo: \"%s\"\n", chave);
             printf("Inserido %i bytes no final\n\n", tamanho);
         }
     }
-
-    return true;
 }
 

@@ -1,16 +1,16 @@
 #include "../include/operacoes.h"
 
+static void cria_header(FILE* arquivo);
+
 //Importa os dados de um arquivo arbitrário e os escreve em dados.dat
 //Retorno:
 //  TRUE - se a importação ocorrer com sucesso
 //  FALSE - se algum erro acontecer
-bool importa(char* filename){
+void importa(char* filename){
     FILE* dados = abrir_arquivo(filename, "r");
     FILE* dat = abrir_arquivo("dados.dat", "w");
 
-    if(!cria_header(dat)){
-        return false;
-    }
+    cria_header(dat);
     
     char bloco[BLOCO];
     char regbuff[REGISTRO];
@@ -80,7 +80,6 @@ bool importa(char* filename){
 
     fclose(dat);
     fclose(dados);
-    return true;
 }
 
 
@@ -89,16 +88,9 @@ bool importa(char* filename){
 //Retorno:
 //  TRUE - se o registro for escrito com sucesso
 //  FALSE -se algum erro acontecer na escrita
-bool escreve(FILE* arquivo, char *registro, short tamanho){
-    if(fwrite(&tamanho, sizeof(tamanho), 1, arquivo) != 1){
-        printf("Erro de escrita - (tamanho)\n");
-        return false;
-    }
-    if(fputs(registro, arquivo) == EOF) {
-        printf("Erro de escrita - (registro)\n");
-        return false;
-    }
-    return true;
+void escreve(FILE* arquivo, char *registro, short tamanho){
+    fwrite(&tamanho, sizeof(tamanho), 1, arquivo);
+    fputs(registro, arquivo);
 }
 
 
@@ -127,13 +119,9 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
 //Cria um header de 8 bytes para o manuseio da LED
 //Retorna TRUE se o header for criado com sucesso
 //Retorna FALSE se ocorrer um problema de escrita
-static bool cria_header(FILE* arquivo){
+static void cria_header(FILE* arquivo){
     int head = -1;
-    if(fwrite(&head, sizeof(head), 1, arquivo) != 1){
-        printf("Erro ao criar o header.\n");
-        return false;
-    }
-    return true;
+    fwrite(&head, sizeof(head), 1, arquivo);
 }
 
 

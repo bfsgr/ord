@@ -1,5 +1,7 @@
 #include "../include/operacoes.h"
 
+static void definir_op(FILE* arquivo, char* linha);
+
 int main(int argc, char **argv) {
 
     if (argc < 3) {
@@ -12,20 +14,14 @@ int main(int argc, char **argv) {
     if (strcmp(argv[1], "-i") == 0) {
         printf("Modo de importacao ativado ... nome do arquivo = %s\n", argv[2]);
         
-        if(importa(argv[2])){
-            printf("Importação realizada com sucesso!\n");
-        } else {
-            printf("Ocorreu um erro durante a importação.\n");
-        }
+        importa(argv[2]);
+        printf("Importação realizada com sucesso!\n");
         
     } else if (strcmp(argv[1], "-e") == 0) {
         printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n\n", argv[2]);
-
-        if(executa(argv[2])){
-            printf("Execução finalizada com sucesso!\n");
-        } else {
-            printf("Ocorreu um erro durante a execução.\n");
-        }
+        //chama a execução do arquivo de operações
+        executa(argv[2]);
+        printf("Execução finalizada com sucesso!\n");
 
     } else {
         fprintf(stderr, "Opcao \"%s\" nao suportada!\n", argv[1]);
@@ -34,8 +30,8 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-bool executa(char* arquivo){
-    FILE* operacoes = abrir_arquivo(arquivo, "rb");
+void executa(char* arquivo){
+    FILE* operacoes = abrir_arquivo(arquivo, "r");
     //verifica se o arquivo de dados existe, se sim, abra com r+b
     FILE* dados = abrir_arquivo("dados.dat", "r");
     fclose(dados);
@@ -109,7 +105,6 @@ bool executa(char* arquivo){
     //feche os arquivos
     fclose(operacoes);
     fclose(dados);
-    return true;
 }
 
 static void definir_op(FILE* arquivo, char* linha){
