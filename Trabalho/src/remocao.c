@@ -10,7 +10,7 @@ bool remover(FILE* arquivo, char* chave){
         if(fread(&size, sizeof(size), 1, arquivo) != 1) { return false; }
 
         if(fputc(REMOVED, arquivo) == EOF) { return false; };
-        if(fputc(DELIM_FIELD[0], arquivo) == EOF) { return false; };
+        if(fputc(DELIM_FIELD, arquivo) == EOF) { return false; };
         if(fwrite(&nulo, sizeof(nulo), 1, arquivo) != 1) { return false; };
 
         if( !insere_led(arquivo, offset) ) { return false; }
