@@ -5,8 +5,8 @@
 
 #define BLOCO 4096 //Tamanho do bloco bufferizado do arquivo
 #define REGISTRO 2048
-#define DELIM_REG "\n" 
-#define DELIM_FIELD "|" 
+#define DELIM_REG '\n'
+#define DELIM_FIELD '|'
 #define REMOVED '*'
 
 bool importa(char *filename);

@@ -25,14 +25,14 @@ bool importa(char* filename){
             //salve o começo do registro atual
             int start = iter;
             //itere até encontrar um \n (Delimitador de registro)
-            while(iter < lidos && bloco[iter] != DELIM_REG[0] ){
+            while(iter < lidos && bloco[iter] != DELIM_REG ){
                 iter++;
             }
 
             //estamos no final do bloco?
             if(iter == lidos){
                 //o registro está completo?
-                if(bloco[iter] == DELIM_REG[0]){
+                if(bloco[iter] == DELIM_REG){
                     //marque o final e escreva o registro no disco
                     bloco[iter] = '\0';
                     //A flag de fragmentação está ligada?

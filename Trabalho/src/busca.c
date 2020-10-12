@@ -49,7 +49,7 @@ int busca(FILE* arquivo, char* chave, bool printa){
             
             //aumente j até encontrar um | (DELIM_FIELD)
             int j = i;
-            while(dados[j] !=  DELIM_FIELD[0]){
+            while(dados[j] !=  DELIM_FIELD){
                 j++;
             }
             //o substitua por \0
