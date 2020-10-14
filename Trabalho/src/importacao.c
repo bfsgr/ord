@@ -3,19 +3,20 @@
 static void cria_header(FILE* arquivo);
 
 //Importa os dados de um arquivo arbitrário e os escreve em dados.dat
-//Retorno:
-//  TRUE - se a importação ocorrer com sucesso
-//  FALSE - se algum erro acontecer
 void importa(char* filename){
     FILE* dados = abrir_arquivo(filename, "r");
     FILE* dat = abrir_arquivo("dados.dat", "w");
 
     cria_header(dat);
     
+    //Buffer do bloco e de registro
     char bloco[BLOCO];
     char regbuff[REGISTRO];
+    //Zera o buffer de registro 
     regbuff[0] = '\0';
+    //flag de controle
     bool fragmentado = false;
+    //iterador
     int iter = 0;
     
     unsigned int lidos = le_bloco(dados, bloco);
@@ -85,9 +86,6 @@ void importa(char* filename){
 
 //Escreve um registro arbitrário na cabeça de leitura atual do arquivo de dados
 //Prefixa o registro com o seu tamanho
-//Retorno:
-//  TRUE - se o registro for escrito com sucesso
-//  FALSE -se algum erro acontecer na escrita
 void escreve(FILE* arquivo, char *registro, short tamanho){
     fwrite(&tamanho, sizeof(tamanho), 1, arquivo);
     fputs(registro, arquivo);
@@ -117,8 +115,6 @@ unsigned int le_bloco(FILE* arquivo, char* buffer){
 
 
 //Cria um header de 8 bytes para o manuseio da LED
-//Retorna TRUE se o header for criado com sucesso
-//Retorna FALSE se ocorrer um problema de escrita
 static void cria_header(FILE* arquivo){
     int head = -1;
     fwrite(&head, sizeof(head), 1, arquivo);
