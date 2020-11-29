@@ -1,5 +1,6 @@
 #include "../include/common.h"
 #include "../include/importa.h"
+#include "../include/imprime.h"
 
 int main(int argc, char **argv) {
 
@@ -17,6 +18,7 @@ int main(int argc, char **argv) {
         
     } else if (strcmp(argv[1], "-p") == 0) {
         printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n\n", argv[2]);
+        imprime();
         printf("Execução finalizada com sucesso!\n");
 
     } else {
