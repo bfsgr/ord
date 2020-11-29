@@ -118,17 +118,16 @@ int busca(FILE* tree, int chave){
 
 int busca_pagina(FILE* tree, Pagina *p, int chave, int rrn){
     if(p != NULL){
-        int pos = 0, i = 0;
+        int i = 0;
 
         while(i < ORDEM - 1 && chave > p->chaves[i].chave && p->chaves[i].chave != -1){
             i++;
-            pos++;
         }
 
-        if(chave < p->chaves[pos].chave)  {
+        if(chave < p->chaves[i].chave)  {
             //verificar filho esquerdo do elemento em POS
-            if(p->chaves[pos].esq != -1){
-                rrn = p->chaves[pos].esq;
+            if(p->chaves[i].esq != -1){
+                rrn = p->chaves[i].esq;
                 fseek(tree, rrn * RRN_SIZE, SEEK_SET);
                 fread(p, RRN_SIZE, 1, tree);
                 return busca_pagina(tree, p, chave, rrn);
@@ -142,8 +141,8 @@ int busca_pagina(FILE* tree, Pagina *p, int chave, int rrn){
                 return rrn;
             }
         } else {
-            if(p->chaves[pos - 1].dir != -1){
-                rrn = p->chaves[pos - 1].dir;
+            if(p->chaves[i - 1].dir != -1){
+                rrn = p->chaves[i - 1].dir;
                 fseek(tree, rrn * RRN_SIZE, SEEK_SET);
                 fread(p, RRN_SIZE, 1, tree);
                 return busca_pagina(tree, p, chave, rrn);
