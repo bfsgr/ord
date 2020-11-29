@@ -32,14 +32,65 @@ void importa(char* filename) {
     fclose(chaves);
 }
 
+void divide(FILE* tree, Pagina *p, int *dir, int *esq){
+    const int meio = (ORDEM - 1) / 2;
+    int offset;
+    Pagina p1, p2;
+    inicializa_pagina(&p1);
+    inicializa_pagina(&p2);
+
+    for(int i = 0; i < meio; i++){
+        p1.chaves[i] = p->chaves[i];
+        p1.n++;
+    }
+
+    for(int i = meio; i < ORDEM - 1; i++){
+        p2.chaves[i - meio] = p->chaves[i];
+        p2.n++;
+    }
+
+    fseek(tree, 0, SEEK_END);
+    offset = ftell(tree) / RRN_SIZE;
+    *esq = offset;
+    fwrite(&p1, RRN_SIZE, 1, tree);
+    offset = ftell(tree) / RRN_SIZE;
+    *dir = offset;
+    fwrite(&p2, RRN_SIZE, 1, tree);
+}
+
+void promove(FILE* tree, Pagina *p, int raiz, int *dir, int *esq){
+    Pagina pdir;
+
+    fseek(tree, RRN_SIZE * (*dir), SEEK_SET);
+    fread(&pdir, RRN_SIZE, 1, tree);
+
+    inicializa_pagina(p);
+
+    p->chaves[0] = pdir.chaves[0];
+    p->n = 1;
+
+    for(int i = 0; i < ORDEM - 2; i++){
+        pdir.chaves[i] = pdir.chaves[i + 1];
+    }
+    pdir.n--;
+
+    p->chaves[0].dir = *dir;
+    p->chaves[0].esq = *esq;
+
+    fseek(tree, RRN_SIZE * raiz, SEEK_SET);
+    fwrite(p, RRN_SIZE, 1, tree);
+    fseek(tree, RRN_SIZE * (*dir), SEEK_SET);
+    fwrite(&pdir, RRN_SIZE, 1, tree);
+}
+
 void inserir(FILE* tree, int rrn, Chave key){
     Pagina p;
-    fseek(tree, rrn + RRN_SIZE, SEEK_SET);
+    fseek(tree, rrn * RRN_SIZE, SEEK_SET);
     fread(&p, RRN_SIZE, 1, tree);    
 
     int pos = 0, i = 0;
 
-    while(i < ORDEM - 1 && key.chave > p.chaves[i].chave){
+    while(i < ORDEM - 1 && key.chave > p.chaves[i].chave && p.chaves[i].chave != -1){
         i++;
         pos++;
     }
@@ -53,7 +104,6 @@ void inserir(FILE* tree, int rrn, Chave key){
 
     fseek(tree, rrn * RRN_SIZE, SEEK_SET);
     fwrite(&p, RRN_SIZE, 1, tree);
-
 }
 
 int busca(FILE* tree, int chave){
@@ -63,38 +113,47 @@ int busca(FILE* tree, int chave){
     //leia umam página do arquivo
     fread(&p, RRN_SIZE, 1, tree);
 
-    return busca_pagina(tree, &p, chave);
+    return busca_pagina(tree, &p, chave, 0);
 }
 
-int busca_pagina(FILE* tree, Pagina *p, int chave){
-    static int rrn = 0;
+int busca_pagina(FILE* tree, Pagina *p, int chave, int rrn){
     if(p != NULL){
         int pos = 0, i = 0;
 
-        while(i < ORDEM - 1 && chave > p->chaves[i].chave){
+        while(i < ORDEM - 1 && chave > p->chaves[i].chave && p->chaves[i].chave != -1){
             i++;
             pos++;
         }
 
-        if(pos > ORDEM - 2){
-            //verificar filho direito do ultimo elemento
-            if(p->chaves[pos - 1].dir != -1){
-                rrn = p->chaves[pos].dir;
-                fseek(tree, rrn + RRN_SIZE, SEEK_SET);
-                fread(p, RRN_SIZE, 1, tree);
-                return busca_pagina(tree, p, chave);
-            } else {
-                //divisão e promoção
-            }
-        } else  {
+        if(chave < p->chaves[pos].chave)  {
             //verificar filho esquerdo do elemento em POS
             if(p->chaves[pos].esq != -1){
                 rrn = p->chaves[pos].esq;
-                fseek(tree, rrn + RRN_SIZE, SEEK_SET);
+                fseek(tree, rrn * RRN_SIZE, SEEK_SET);
                 fread(p, RRN_SIZE, 1, tree);
-                return busca_pagina(tree, p, chave);
+                return busca_pagina(tree, p, chave, rrn);
             } else if(p->n >= ORDEM - 1) {
                 //divisão e promoção
+                int dir, esq;
+                divide(tree, p, &dir, &esq);
+                promove(tree, p, rrn, &dir, &esq);
+                return busca_pagina(tree, p, chave, rrn);
+            } else {
+                return rrn;
+            }
+        } else {
+            if(p->chaves[pos - 1].dir != -1){
+                rrn = p->chaves[pos - 1].dir;
+                fseek(tree, rrn * RRN_SIZE, SEEK_SET);
+                fread(p, RRN_SIZE, 1, tree);
+                return busca_pagina(tree, p, chave, rrn);
+            } else if(p->n >= ORDEM - 1) {
+                //divisão e promoção
+                int dir, esq;
+                divide(tree, p, &dir, &esq);
+                promove(tree, p, rrn, &dir, &esq);
+
+                return busca_pagina(tree, p, chave, rrn);
             } else {
                 return rrn;
             }
