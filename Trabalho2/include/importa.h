@@ -1,16 +1,7 @@
 
-#include "./common.h"
-
-typedef struct {
-    int dir;
-    int chave; 
-    int esq;
-} Chave ;
-
-typedef struct {
-    int n;
-    Chave chaves[ORDEM - 1]; 
-} Pagina ;
+#ifndef __COMMMON_INC
+    #include "./common.h"
+#endif
 
 #define RRN_SIZE sizeof(Pagina)
 
