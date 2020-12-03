@@ -12,7 +12,7 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(argv[1], "-c") == 0 && argc == 3) {
-        printf("Modo de importacao ativado ... nome do arquivo = %s\n", argv[2]);
+        printf("Modo de criação ... nome do arquivo = %s\n", argv[2]);
         importa(argv[2]);
         printf("Importação realizada com sucesso!\n");
         
@@ -26,19 +26,4 @@ int main(int argc, char **argv) {
     }
 
     return 0;
-}
-
-//Abre um arquivo dado o modo
-//Retorna um ponteiro para o FILE stream
-//Em caso de erro encerra a execução do programa com código 1
-FILE* abrir_arquivo(char *filename, char* modo){
-    FILE *fp;
-    fp = fopen(filename, modo);
-
-    if(fp == NULL || ferror(fp) != 0){ 
-        printf("Um erro aconteceu ao abrir o arquivo %s.\n", filename);
-        exit(1);
-    } else {
-        return fp;
-    }
 }
