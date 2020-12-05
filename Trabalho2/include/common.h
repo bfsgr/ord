@@ -5,7 +5,7 @@
 
 #define __COMMMON_INC
 
-#define ORDEM 4
+#define ORDEM 5
 #define MAX_DIG 10
 
 typedef struct {
