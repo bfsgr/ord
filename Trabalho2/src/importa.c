@@ -17,11 +17,11 @@ void importa(char* filename) {
     fwrite(&raiz, sizeof(int), 1, btree);
     // Escrever a página
     escreve_pagina(btree, &p, raiz);
+    chave = le_linha(chaves); 
 
     // 2) Inserir chave a chave
-    while(feof(chaves) == 0) {
+    while(chave != -1) {
         int filho_pro, chave_pro;
-        chave = le_linha(chaves); 
         int resultado = inserir(btree, raiz, chave, &filho_pro, &chave_pro); 
 
         if(resultado == PROMOCAO){
@@ -40,7 +40,7 @@ void importa(char* filename) {
             fwrite(&raiz, sizeof(int), 1, btree);
         }
 
-        printf("INSERIDO: %i\n", chave);
+        chave = le_linha(chaves); 
     }
 
     fclose(btree);
@@ -184,16 +184,20 @@ void inicializa_pagina(Pagina *p){
 
 
 int le_linha(FILE* file){
-    char cur = fgetc(file);
-    char str[MAX_DIG];
-    memset(str, '\0', MAX_DIG);
+    if(feof(file) != 0){
+        return EOF;
+    } else {
+        char cur = fgetc(file);
+        char str[MAX_DIG];
+        memset(str, '\0', MAX_DIG);
 
-    while(cur != '\n' && cur != EOF){
-        str[strlen(str)] = cur;
-        cur = getc(file); 
+        while(cur != '\n' && cur != EOF){
+            str[strlen(str)] = cur;
+            cur = getc(file); 
+        }
+
+        return atoi(str);
     }
-
-    return atoi(str);
 }
 
 
