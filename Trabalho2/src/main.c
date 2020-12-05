@@ -17,9 +17,9 @@ int main(int argc, char **argv) {
         printf("Importação realizada com sucesso!\n");
         
     } else if (strcmp(argv[1], "-p") == 0) {
-        printf("Modo de execucao de operacoes ativado ... nome do arquivo = %s\n\n", argv[2]);
+        printf("Modo de print\n\n");
         imprime();
-        printf("Execução finalizada com sucesso!\n");
+        printf("\nExecução finalizada com sucesso!\n");
 
     } else {
         fprintf(stderr, "Opcao \"%s\" nao suportada!\n", argv[1]);
