@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define __COMMMON_INC
 
@@ -9,15 +9,17 @@
 #define MAX_DIG 10
 
 typedef struct {
-    int esq;
-    int chave; 
-    int dir;
-} Chave ;
+    int n;
+    int chaves[ORDEM - 1]; 
+    int filhos[ORDEM];
+} Pagina ;
+
 
 typedef struct {
     int n;
-    Chave chaves[ORDEM - 1]; 
-} Pagina ;
+    int chaves[ORDEM]; 
+    int filhos[ORDEM + 1];
+} PaginaAux ;
 
 #define RRN_SIZE sizeof(Pagina)
 

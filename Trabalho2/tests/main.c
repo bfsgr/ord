@@ -10,8 +10,8 @@
 #include <stdbool.h>
 #include <cmocka.h>
 
-static void busca_pagina_altura2(void **state){
-    int raiz;
+static void insere_pagina_altura2(void **state){
+    int raiz, pos, superior = -1;
     Pagina p;
     FILE* tree = fopen("assets/tests/altura2.tree", "rb");
     //le o rrn da raiz e leia a pagina raiz
@@ -19,15 +19,17 @@ static void busca_pagina_altura2(void **state){
     le_pagina(tree, &p, raiz);
 
     Chave k = {-1, 7, -1 };
-    int result = busca_pagina(tree, raiz, &p, k);
+    int result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 1);
     
     //volte a pagina raiz
     le_pagina(tree, &p, raiz);
 
     k.chave = 20;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 2);
+    assert_int_equal(pos, 1);
 
     fclose(tree);
 
@@ -36,8 +38,8 @@ static void busca_pagina_altura2(void **state){
 
 
 //no matter what key we try to put in it should always return rrn 0;
-static void busca_pagina_unica_pagina(void **state){
-    int raiz;
+static void insere_unica_pagina(void **state){
+    int raiz, pos;
     Pagina p;
     FILE* tree = fopen("assets/tests/unicaPagina.tree", "rb");
     //le o rrn da raiz e leia a pagina raiz
@@ -48,13 +50,15 @@ static void busca_pagina_unica_pagina(void **state){
 
     //INSERT A LESS THAN ALL ELEMENT
     Chave k = {-1, 8, -1 };
-    int result = busca_pagina(tree, raiz, &p, k);
+    int result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 0);
 
     //INSERT A GREATER THAN ALL ELEMENT
     k.chave = 20;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 1);
 
     //change the tree to one that is full
     fclose(tree);
@@ -64,20 +68,24 @@ static void busca_pagina_unica_pagina(void **state){
     
     //test all cases of insertion in a full page
     k.chave = 1;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 0);
 
     k.chave = 18;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 1);
     
     k.chave = 25;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 2);
 
     k.chave = 30;
-    result = busca_pagina(tree, raiz, &p, k);
+    result = busca_pagina(tree, &p, k, raiz, &pos);
     assert_int_equal(result, 0);
+    assert_int_equal(pos, 2);
 
     fclose(tree);
 
@@ -86,8 +94,8 @@ static void busca_pagina_unica_pagina(void **state){
 
 int main(void) {
     const struct CMUnitTest tests[] = {
-        cmocka_unit_test(busca_pagina_unica_pagina),
-        cmocka_unit_test(busca_pagina_altura2),
+        cmocka_unit_test(insere_unica_pagina),
+        cmocka_unit_test(insere_pagina_altura2),
     };
     return cmocka_run_group_tests(tests, NULL, NULL);
 }

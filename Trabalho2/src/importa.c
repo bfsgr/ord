@@ -4,78 +4,167 @@
 void importa(char* filename) {
     FILE* btree = abrir_arquivo("btree.dat", "w+b");
     FILE* chaves = abrir_arquivo(filename, "r");
-    const int zero = 0;
+    int raiz = 0;
 
     // 1) Inicializar uma página com a primeira chave de $chaves
-    Chave el = gera_chave(le_linha(chaves));
+    int chave = le_linha(chaves);
     Pagina p;
     inicializa_pagina(&p);
-    p.chaves[0] = el;
+    p.chaves[0] = chave;
     p.n++;
 
     // Escrever o cabeçalho
-    fwrite(&zero, sizeof(int), 1, btree);
+    fwrite(&raiz, sizeof(int), 1, btree);
     // Escrever a página
-    escreve_pagina(btree, &p);
+    escreve_pagina(btree, &p, raiz);
 
     // 2) Inserir chave a chave
     while(feof(chaves) == 0) {
-        el = gera_chave(le_linha(chaves));
+        int filho_pro, chave_pro;
+        chave = le_linha(chaves); 
+        int resultado = inserir(btree, raiz, chave, &filho_pro, &chave_pro); 
 
-        inserir(btree, el); 
+        if(resultado == PROMOCAO){
+            Pagina new;
+            inicializa_pagina(&new);
+            new.chaves[0] = chave_pro;
+            new.filhos[0] = raiz;
+            new.filhos[1] = filho_pro;
+            new.n++;
+
+            fseek(btree, 0, SEEK_END);
+            raiz = (ftell(btree) - START) / RRN_SIZE;
+            fwrite(&new, RRN_SIZE, 1, btree);
+
+            fseek(btree, 0, SEEK_SET);
+            fwrite(&raiz, sizeof(int), 1, btree);
+        }
+
+        printf("INSERIDO: %i\n", chave);
     }
 
     fclose(btree);
     fclose(chaves);
 }
 
-void inserir(FILE* tree, Chave k){
-    int rrn = busca(tree, k);
-    printf("a");
-
-}
-
-int busca(FILE* tree, Chave k){
-    // vá para o começo e leia o RRN da raiz
-    rewind(tree);
-    int raiz;
-    fread(&raiz, sizeof(int), 1, tree);
-    //vá para o RRN da raiz
-    fseek(tree, raiz * RRN_SIZE, SEEK_CUR);
-
-    Pagina p;
-    fread(&p, RRN_SIZE, 1, tree);
-
-    return busca_pagina(tree, 0, &p, k);
-}
-
-int busca_pagina(FILE* tree, int rrn, Pagina *p, Chave k) {
-    //caminhe pelas chaves até encontrar uma chave menor do que k
+bool busca_na_pagina(int k, void *p, int *pos){
     int i = 0;
-    while(i < p->n && k.chave > p->chaves[i].chave){
+    while(i < ((Pagina*)p)->n && k > ((Pagina*)p)->chaves[i] && i + 1 < ORDEM - 1){
         i++;
     }
-    //nesse ponto i é o indice da chave no qual k deveria ser inserida
-    //há dois casos 
-    //i != p->n ==> verificar existência do filho da esquerda
-    //i == p->n ==> verificar existência do filho direito
-    if(i != p->n){
-        if(p->chaves[i].esq != -1){
-            int new_rrn = p->chaves[i].esq;
-            le_pagina(tree, p, p->chaves[i].esq);
-            return busca_pagina(tree, new_rrn, p, k);
-        } else {
-            return rrn;
-        }
+    *pos = i;
+
+    return ((Pagina*)p)->chaves[i] == k;
+
+} 
+
+int inserir(FILE* tree, int rrn_atual, int k, int *filho_dir_pro, int *chave_promovida) {
+    if(rrn_atual == EOF){
+        *chave_promovida = k;
+        *filho_dir_pro = EOF;
+        return PROMOCAO;
     } else {
-        if(p->chaves[i - 1].dir != -1){
-            int new_rrn = p->chaves[i-1].dir;
-            le_pagina(tree, p, p->chaves[i - 1].dir);
-            return busca_pagina(tree, new_rrn, p, k);
+        Pagina p;
+        int pos, retorno;
+        le_pagina(tree, &p, rrn_atual);
+        //busque esse elemento na pagina
+        if(busca_na_pagina(k, &p, &pos)){
+            printf("Chave %i duplicada\n", k);
+            return ERRO;
+        } 
+
+        retorno = inserir(tree, p.filhos[pos], k, filho_dir_pro, chave_promovida);
+
+        if(retorno == SEM_PROMOCAO || retorno == ERRO){
+            return retorno;
         } else {
-            return rrn;
+            //tem espaço?
+            if(p.n < ORDEM - 1) {
+                //desloca
+                for(int i = ORDEM - 2; i > pos; i--){
+                    p.chaves[i] = p.chaves[i-1];
+                }
+                for(int i = ORDEM - 1; i > pos; i--){
+                    p.filhos[i] = p.filhos[i-1];
+                }
+
+
+
+                p.chaves[pos] = *chave_promovida;
+                int aux = p.filhos[pos + 1];
+                p.filhos[pos + 1] = *filho_dir_pro;
+                p.filhos[pos] = aux;
+                p.n++;
+
+                escreve_pagina(tree, &p, rrn_atual);
+                return SEM_PROMOCAO;
+            } else {
+                Pagina nova;
+                inicializa_pagina(&nova);
+                //divide e promove
+                divide(tree, *chave_promovida, *filho_dir_pro, &p, chave_promovida, filho_dir_pro, &nova);
+                escreve_pagina(tree, &p, rrn_atual);
+                return PROMOCAO;
+            }
         }
+
     }
+}
+
+void divide(FILE* tree, int chave, int dir, Pagina *p, int *chave_pro, int *filho_dir_pro, Pagina *nova_pag){
+    PaginaAux aux;
+    memset(&aux, -1, sizeof(PaginaAux));
+    aux.n = p->n;
+    for(int i = 0; i < ORDEM - 1; i++){
+        aux.chaves[i] = p->chaves[i];
+    }
+    for(int i = 0; i < ORDEM; i++){
+        aux.filhos[i] = p->filhos[i];
+    }
+        
+    
+    int pos;
+    busca_na_pagina(chave, &aux, &pos);
+
+    //desloca
+    for(int i = ORDEM - 1; i > pos; i--){
+        aux.chaves[i] = aux.chaves[i-1];
+    }
+    for(int i = ORDEM; i > pos; i--){
+        aux.filhos[i] = aux.filhos[i-1];
+    }
+
+    aux.chaves[pos] = chave;
+    aux.filhos[pos + 1] = dir;
+    aux.n++;
+
+    *chave_pro = aux.chaves[ORDEM / 2];
+
+    inicializa_pagina(p);
+    for(int i = 0; i < ORDEM / 2; i++) {
+        p->chaves[i] = aux.chaves[i];
+        p->n++;
+    }
+    for(int i = 0; i < (ORDEM / 2) + 1; i++) {
+        p->filhos[i] = aux.filhos[i];
+    }
+
+    int j = 0;
+    for(int i = (ORDEM / 2) + 1; i < ORDEM; i++){
+        nova_pag->chaves[j] = aux.chaves[i];
+        nova_pag->n++;
+        j++;
+    }
+    j = 0;
+    for(int i = (ORDEM / 2) + 1; i < ORDEM + 1; i++){
+        nova_pag->filhos[j] = aux.filhos[i];
+        j++;
+    }
+
+    
+    fseek(tree, 0, SEEK_END);
+    *filho_dir_pro = (ftell(tree) - START) / RRN_SIZE;
+    fwrite(nova_pag, RRN_SIZE, 1, tree);
 }
 
 void le_pagina(FILE* tree, Pagina *p, int rrn){
@@ -83,7 +172,8 @@ void le_pagina(FILE* tree, Pagina *p, int rrn){
     fread(p, RRN_SIZE, 1, tree);
 }
 
-void escreve_pagina(FILE* tree, Pagina *p){
+void escreve_pagina(FILE* tree, Pagina *p, int rrn){
+    fseek(tree, rrn * RRN_SIZE + START, SEEK_SET);
     fwrite(p, RRN_SIZE, 1, tree);
 }
 
@@ -104,11 +194,6 @@ int le_linha(FILE* file){
     }
 
     return atoi(str);
-}
-
-Chave gera_chave(int num) {
-    Chave c = { -1, num, -1  };
-    return c;
 }
 
 
