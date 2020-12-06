@@ -12,13 +12,27 @@ void imprime(){
 
     printf("\n\n-----");
     printf("Estatísticas da Árvore-B:\n");
-    printf("> Altura: %i\n", altura);
+    printf("> Altura: %i\n", altura_calc(btree, raiz) - 1);
     printf("> Número de Chaves: %i\n", chaves);
     printf("> Número de Páginas: %i\n", paginas);
     printf("> Taxa de ocupação: %.2f%%\n", ( (float)chaves / ((ORDEM - 1) * (float) paginas)) * 100.0);
 
 
     fclose(btree);
+}
+
+int altura_calc(FILE* tree, int rrn){
+    if(rrn == -1){
+        return 0;
+    } else {
+        Pagina p;
+        le_pagina(tree, &p, rrn);
+
+        for(int i = 0; i < p.n + 1; i++){
+            return 1 + altura_calc(tree, p.filhos[i]);
+        }
+    }
+    return 0;
 }
 
 void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, int *altura){
@@ -32,7 +46,7 @@ void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, in
         int i = 0;
 
         while(i < ORDEM && pdir.filhos[i] >= 0){
-            if(pdir.filhos[i + 1] != -1){
+            if(i + 1 < ORDEM - 1 && pdir.filhos[i + 1] != -1){
                 *paginas += 2;
                 caminha(tree, pdir.filhos[i + 1], pdir.filhos[i], paginas, chaves, altura);
                 i += 2;
@@ -53,7 +67,7 @@ void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, in
         int i = 0;
 
         while(i < ORDEM && pesq.filhos[i] >= 0){
-            if(pesq.filhos[i + 1] != -1){
+            if(i + 1 < ORDEM - 1 && pesq.filhos[i + 1] != -1){
                 *paginas += 2;
                 caminha(tree, pesq.filhos[i + 1], pesq.filhos[i], paginas, chaves, altura);
                 i += 2;
@@ -65,7 +79,6 @@ void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, in
             inc_altura = true;
         }
     }
-    
     inc_altura ? *altura = *altura + 1 : *altura;
 }
 
