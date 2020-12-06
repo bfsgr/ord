@@ -4,11 +4,11 @@
 void imprime(){
     FILE *btree = abrir_arquivo("btree.dat", "rb");
 
-    int raiz, paginas = 1, chaves = 0, altura = 0;
+    int raiz, paginas = 1, chaves = 0;
     fread(&raiz, START, 1, btree);
 
     printf("-- RAIZ --\n");
-    caminha(btree, raiz, -1, &paginas, &chaves, &altura);
+    caminha(btree, raiz, -1, &paginas, &chaves); 
 
     printf("\n\n-----");
     printf("Estatísticas da Árvore-B:\n");
@@ -35,8 +35,7 @@ int altura_calc(FILE* tree, int rrn){
     return 0;
 }
 
-void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, int *altura){
-    bool inc_altura = false;
+void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves){
     Pagina pdir, pesq;
     if(rrn_dir != -1) {
         le_pagina(tree, &pdir, rrn_dir);
@@ -48,14 +47,13 @@ void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, in
         while(i < ORDEM && pdir.filhos[i] >= 0){
             if(i + 1 < ORDEM - 1 && pdir.filhos[i + 1] != -1){
                 *paginas += 2;
-                caminha(tree, pdir.filhos[i + 1], pdir.filhos[i], paginas, chaves, altura);
+                caminha(tree, pdir.filhos[i + 1], pdir.filhos[i], paginas, chaves);
                 i += 2;
             } else {
                 *paginas += 1;
-                caminha(tree, pdir.filhos[i], -1, paginas, chaves, altura);
+                caminha(tree, pdir.filhos[i], -1, paginas, chaves);
                 i += 1;
             }
-            inc_altura = true;
         }
 
     }
@@ -69,17 +67,15 @@ void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves, in
         while(i < ORDEM && pesq.filhos[i] >= 0){
             if(i + 1 < ORDEM - 1 && pesq.filhos[i + 1] != -1){
                 *paginas += 2;
-                caminha(tree, pesq.filhos[i + 1], pesq.filhos[i], paginas, chaves, altura);
+                caminha(tree, pesq.filhos[i + 1], pesq.filhos[i], paginas, chaves);
                 i += 2;
             } else {
                 *paginas += 1;
-                caminha(tree, pesq.filhos[i], -1, paginas, chaves, altura);
+                caminha(tree, pesq.filhos[i], -1, paginas, chaves);
                 i += 1;
             }
-            inc_altura = true;
         }
     }
-    inc_altura ? *altura = *altura + 1 : *altura;
 }
 
 void printa_pagina(Pagina *p, int rrn){
