@@ -49,13 +49,12 @@ void importa(char* filename) {
 
 bool busca_na_pagina(int k, void *p, int *pos){
     int i = 0;
-    while(i < ((Pagina*)p)->n && k > ((Pagina*)p)->chaves[i] && i + 1 < ORDEM - 1){
+    while(i < ((Pagina*)p)->n && k > ((Pagina*)p)->chaves[i]){
         i++;
     }
     *pos = i;
 
     return ((Pagina*)p)->chaves[i] == k;
-
 } 
 
 int inserir(FILE* tree, int rrn_atual, int k, int *filho_dir_pro, int *chave_promovida) {
@@ -88,12 +87,8 @@ int inserir(FILE* tree, int rrn_atual, int k, int *filho_dir_pro, int *chave_pro
                     p.filhos[i] = p.filhos[i-1];
                 }
 
-
-
                 p.chaves[pos] = *chave_promovida;
-                int aux = p.filhos[pos + 1];
                 p.filhos[pos + 1] = *filho_dir_pro;
-                p.filhos[pos] = aux;
                 p.n++;
 
                 escreve_pagina(tree, &p, rrn_atual);
@@ -107,7 +102,6 @@ int inserir(FILE* tree, int rrn_atual, int k, int *filho_dir_pro, int *chave_pro
                 return PROMOCAO;
             }
         }
-
     }
 }
 
