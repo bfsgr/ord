@@ -4,21 +4,43 @@
 void imprime(){
     FILE *btree = abrir_arquivo("btree.dat", "rb");
 
-    int raiz, paginas = 1, chaves = 0;
+    int raiz, paginas = 0, chaves = 0;
     fread(&raiz, START, 1, btree);
 
-    printf("-- RAIZ --\n");
-    caminha(btree, raiz, -1, &paginas, &chaves); 
+    printa(btree, raiz, &paginas, &chaves);
 
-    printf("\n\n-----");
-    printf("Estatísticas da Árvore-B:\n");
+    printf("\n- - - - - - - - - - - - - -\n");
+    printf("Estatisticas da Arvore-B:\n");
     printf("> Altura: %i\n", altura_calc(btree, raiz) - 1);
-    printf("> Número de Chaves: %i\n", chaves);
-    printf("> Número de Páginas: %i\n", paginas);
-    printf("> Taxa de ocupação: %.2f%%\n", ( (float)chaves / ((ORDEM - 1) * (float) paginas)) * 100.0);
+    printf("> Numero de chaves: %i\n", chaves);
+    printf("> Numero de paginas: %i\n", paginas);
+    printf("> Taxa de ocupacao: %.2f%%\n", ( (float)chaves / ((ORDEM - 1) * (float) paginas)) * 100.0);
 
 
     fclose(btree);
+}
+
+void printa(FILE* tree, int raiz, int *paginas, int *chaves){
+    Pagina p;
+    int rrn = 0;
+    le_pagina(tree, &p, rrn);
+    while(feof(tree) == 0){
+        *chaves += p.n;
+        *paginas += 1;
+
+        if(rrn == raiz){
+            printf("- - - - Pagina Raiz - - - -\n");
+        }
+
+        printa_pagina(&p, rrn);
+
+        if(rrn == raiz){
+            printf("- - - - - - - - - - - - - -\n");
+        }
+        printf("\n");
+        rrn++;
+        le_pagina(tree, &p, rrn);
+    }
 }
 
 int altura_calc(FILE* tree, int rrn){
@@ -35,62 +57,21 @@ int altura_calc(FILE* tree, int rrn){
     return 0;
 }
 
-void caminha(FILE* tree, int rrn_dir, int rrn_esq, int *paginas, int *chaves){
-    Pagina pdir, pesq;
-    if(rrn_dir != -1) {
-        le_pagina(tree, &pdir, rrn_dir);
-        printa_pagina(&pdir, rrn_dir);
-        *chaves += pdir.n;
-
-        int i = 0;
-
-        while(i < ORDEM && pdir.filhos[i] >= 0){
-            if(i + 1 < ORDEM - 1 && pdir.filhos[i + 1] != -1){
-                *paginas += 2;
-                caminha(tree, pdir.filhos[i + 1], pdir.filhos[i], paginas, chaves);
-                i += 2;
-            } else {
-                *paginas += 1;
-                caminha(tree, pdir.filhos[i], -1, paginas, chaves);
-                i += 1;
-            }
-        }
-
-    }
-    if(rrn_esq != -1){
-        le_pagina(tree, &pesq, rrn_esq);
-        printa_pagina(&pesq, rrn_esq);
-        *chaves += pesq.n;
-        
-        int i = 0;
-
-        while(i < ORDEM && pesq.filhos[i] >= 0){
-            if(i + 1 < ORDEM - 1 && pesq.filhos[i + 1] != -1){
-                *paginas += 2;
-                caminha(tree, pesq.filhos[i + 1], pesq.filhos[i], paginas, chaves);
-                i += 2;
-            } else {
-                *paginas += 1;
-                caminha(tree, pesq.filhos[i], -1, paginas, chaves);
-                i += 1;
-            }
-        }
-    }
-}
-
 void printa_pagina(Pagina *p, int rrn){
-    printf("RRN: %i\n", rrn);
+    printf("Pagina %i\n", rrn);
     printf("Chaves: ");
 
-    for(int i = 0; i < p->n; i++){
-        printf("%i ", p->chaves[i]);
+    for(int i = 0; i < p->n - 1; i++){
+        printf("%i | ", p->chaves[i]);
     }
+    printf("%i", p->chaves[p->n - 1]);
     printf("\nFilhos: ");
 
 
-    for(int i = 0; i <= p->n; i++){
+    for(int i = 0; i < p->n; i++){
         printf("%i | ", p->filhos[i]);
     }
-    printf("\n\n");
+    printf("%i", p->filhos[p->n]);
+    printf("\n");
 
 }

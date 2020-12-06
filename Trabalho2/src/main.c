@@ -17,10 +17,7 @@ int main(int argc, char **argv) {
         printf("Importação realizada com sucesso!\n");
         
     } else if (strcmp(argv[1], "-p") == 0) {
-        printf("Modo de print\n\n");
         imprime();
-        printf("\nExecução finalizada com sucesso!\n");
-
     } else {
         fprintf(stderr, "Opcao \"%s\" nao suportada!\n", argv[1]);
     }
